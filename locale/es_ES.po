@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:account.invoice,shipment_address:"
+msgid "Shipment Address"
+msgstr "Dirección de envío"
+
+msgctxt "field:account.invoice,shipment_addresses:"
+msgid "Shipment Addresses"
+msgstr "Direcciones de envío"
