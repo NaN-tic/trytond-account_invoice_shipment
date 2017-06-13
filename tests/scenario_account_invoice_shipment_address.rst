@@ -121,7 +121,7 @@ Create sale::
     >>> sale.click('confirm')
     >>> sale.click('process')
     >>> invoice, = sale.invoices
-    >>> len(invoice.shipment_addresses)
+    >>> len(invoice.shipment_origin_addresses)
     1
-    >>> invoice.shipment_address.id
+    >>> invoice.shipment_origin_address.id
     2

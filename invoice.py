@@ -12,12 +12,12 @@ __all__ = ['Invoice']
 class Invoice:
     __metaclass__ = PoolMeta
     __name__ = 'account.invoice'
-    shipment_addresses = fields.Function(fields.Many2Many('party.address',
-        None, None, 'Shipment Addresses'), 'get_shipment_addresses')
-    shipment_address = fields.Function(fields.Many2One('party.address',
-        'Shipment Address'), 'get_shipment_address')
+    shipment_origin_addresses = fields.Function(fields.Many2Many('party.address',
+        None, None, 'Origin Shipment Addresses'), 'get_shipment_origin_addresses')
+    shipment_origin_address = fields.Function(fields.Many2One('party.address',
+        'Origin Shipment Address'), 'get_shipment_origin_address')
 
-    def get_shipment_addresses(self, name=None):
+    def get_shipment_origin_addresses(self, name=None):
         addresses = set()
         for line in self.lines:
             if line.origin and line.origin.__name__ == 'sale.line':
@@ -25,6 +25,6 @@ class Invoice:
                     addresses.add(line.origin.sale.shipment_address)
         return [address.id for address in addresses]
 
-    def get_shipment_address(self, name=None):
-        if self.shipment_addresses:
-            return self.shipment_addresses[0].id
+    def get_shipment_origin_address(self, name=None):
+        if self.shipment_origin_addresses:
+            return self.shipment_origin_addresses[0].id

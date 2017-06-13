@@ -3,9 +3,9 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
 msgctxt "field:account.invoice,shipment_address:"
-msgid "Shipment Address"
-msgstr "Adreça d'enviament"
+msgid "Origin Shipment Address"
+msgstr "Adreça origen d'enviament"
 
 msgctxt "field:account.invoice,shipment_addresses:"
-msgid "Shipment Addresses"
-msgstr "Adreces d'enviament"
+msgid "Origin Shipment Addresses"
+msgstr "Adreces origen d'enviament"
