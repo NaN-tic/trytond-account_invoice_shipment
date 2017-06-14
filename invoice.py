@@ -1,10 +1,7 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
-from trytond.model import ModelSQL, ModelView, fields
-from trytond.pyson import Eval
-from trytond.transaction import Transaction
+from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
-from trytond.model import ModelSQL, ModelView, fields
 
 __all__ = ['Invoice']
 
@@ -12,19 +9,78 @@ __all__ = ['Invoice']
 class Invoice:
     __metaclass__ = PoolMeta
     __name__ = 'account.invoice'
+    shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
+        'Shipments'), 'get_shipments_origin')
+    shipments_origin_return = fields.Function(
+        fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
+        'get_shipments_origin_returns')
+    shipments_origin_number = fields.Function(fields.Char('Origin Shipment Number'),
+        'get_shipments_origin_number')
     shipment_origin_addresses = fields.Function(fields.Many2Many('party.address',
         None, None, 'Origin Shipment Addresses'), 'get_shipment_origin_addresses')
     shipment_origin_address = fields.Function(fields.Many2One('party.address',
         'Origin Shipment Address'), 'get_shipment_origin_address')
+    sales_origin = fields.Function(fields.One2Many('sale.sale', None,
+        'Sales'), 'get_sales_origin')
+    sales_origin_number = fields.Function(fields.Char('Origin Sales Number'),
+        'get_sales_origin_number')
+    sales_origin_reference = fields.Function(fields.Char('Origin Sales Reference'),
+        'get_sales_origin_reference')
+
+    def get_shipments_origin_returns(model_name):
+        "Computes the origin returns or shipments"
+        def method(self, name):
+            Model = Pool().get(model_name)
+            shipments = set()
+            for line in self.lines:
+                if line.origin and line.origin.__name__ == 'sale.line':
+                    for move in line.origin.moves:
+                        if move.shipment and isinstance(move.shipment, Model):
+                            shipments.add(move.shipment.id)
+            return list(shipments)
+        return method
+
+    get_shipments_origin = get_shipments_origin_returns('stock.shipment.out')
+    get_shipments_origin_returns = get_shipments_origin_returns('stock.shipment.out.return')
+
+    def get_shipments_origin_number(self, name=None):
+        numbers = []
+        for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
+            for shipment in getattr(self, shipment_origin):
+                if shipment.number:
+                    numbers.append(shipment.number)
+        return ', '.join(numbers)
 
     def get_shipment_origin_addresses(self, name=None):
         addresses = set()
         for line in self.lines:
             if line.origin and line.origin.__name__ == 'sale.line':
-                if line.origin.sale and line.origin.sale.invoice_address:
+                if line.origin.sale and line.origin.sale.shipment_address:
                     addresses.add(line.origin.sale.shipment_address)
         return [address.id for address in addresses]
 
     def get_shipment_origin_address(self, name=None):
         if self.shipment_origin_addresses:
             return self.shipment_origin_addresses[0].id
+
+    def get_sales_origin(self, name=None):
+        sales = set()
+        for line in self.lines:
+            if line.origin and line.origin.__name__ == 'sale.line':
+                if line.origin.sale:
+                    sales.add(line.origin.sale)
+        return [sale.id for sale in sales]
+
+    def get_sales_origin_reference(field_name):
+        "Computes the origin number or reference"
+        def method(self, name):
+            numbers = set()
+            for line in self.lines:
+                if line.origin and line.origin.__name__ == 'sale.line':
+                    if line.origin.sale:
+                        numbers.add(getattr(line.origin.sale, field_name))
+            return ', '.join(numbers)
+        return method
+
+    get_sales_origin_number = get_sales_origin_reference('number')
+    get_sales_origin_reference = get_sales_origin_reference('reference')
