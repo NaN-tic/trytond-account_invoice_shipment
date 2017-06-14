@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# This file is part account_invoice_shipment_address module for Tryton.
+# This file is part account_invoice_shipment module for Tryton.
 # The COPYRIGHT file at the top level of this repository contains
 # the full copyright notices and license terms.
 
@@ -40,8 +40,8 @@ version = info.get('version', '0.0.1')
 major_version, minor_version, _ = version.split('.', 2)
 major_version = int(major_version)
 minor_version = int(minor_version)
-name = 'nantic_account_invoice_shipment_address'
-download_url = 'https://bitbucket.org/nantic/trytond-account_invoice_shipment_address'
+name = 'nantic_account_invoice_shipment'
+download_url = 'https://bitbucket.org/nantic/trytond-account_invoice_shipment'
 
 requires = []
 for dep in info.get('depends', []):
@@ -65,13 +65,13 @@ setup(name=name,
     url='https://bitbucket.org/nantic/',
     download_url=download_url,
     keywords='',
-    package_dir={'trytond.modules.account_invoice_shipment_address': '.'},
+    package_dir={'trytond.modules.account_invoice_shipment': '.'},
     packages=[
-        'trytond.modules.account_invoice_shipment_address',
-        'trytond.modules.account_invoice_shipment_address.tests',
+        'trytond.modules.account_invoice_shipment',
+        'trytond.modules.account_invoice_shipment.tests',
         ],
     package_data={
-        'trytond.modules.account_invoice_shipment_address': (info.get('xml', [])
+        'trytond.modules.account_invoice_shipment': (info.get('xml', [])
             + ['tryton.cfg', 'view/*.xml', 'locale/*.po', '*.odt',
                 'icons/*.svg', 'tests/*.rst']),
         },
@@ -101,11 +101,11 @@ setup(name=name,
     zip_safe=False,
     entry_points="""
     [trytond.modules]
-    account_invoice_shipment_address = trytond.modules.account_invoice_shipment_address
+    account_invoice_shipment = trytond.modules.account_invoice_shipment
     """,
     test_suite='tests',
     test_loader='trytond.test_loader:Loader',
     tests_require=tests_require,
     use_2to3=True,
-    convert_2to3_doctests=['tests/scenario_account_invoice_shipment_address.rst'],
+    convert_2to3_doctests=['tests/scenario_account_invoice_shipment.rst'],
     )

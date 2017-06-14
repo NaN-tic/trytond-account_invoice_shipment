@@ -1,6 +1,6 @@
-=========================================
-Account Invoice Shipment Address Scenario
-=========================================
+=================================
+Account Invoice Shipment Scenario
+=================================
 
 Imports::
 
@@ -26,7 +26,7 @@ Install sale::
 
     >>> Module = Model.get('ir.module')
     >>> module1, module2 = Module.find([('name', 'in',
-    ...     ['account_invoice_shipment_address', 'sale'])])
+    ...     ['account_invoice_shipment', 'sale'])])
     >>> module1.click('install')
     >>> module2.click('install')
     >>> Wizard('ir.module.install_upgrade').execute('upgrade')

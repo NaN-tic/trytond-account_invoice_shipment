@@ -1,7 +1,7 @@
-nantic_account_invoice_shipment_address
-=======================================
+nantic_account_invoice_shipment
+===============================
 
-The account_invoice_shipment_address module of the Tryton application platform.
+The account_invoice_shipment module of the Tryton application platform.
 
 Installing
 ----------
