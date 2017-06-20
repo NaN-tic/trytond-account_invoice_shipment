@@ -1,5 +1,6 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
+import datetime
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 
@@ -95,8 +96,10 @@ class InvoiceLine:
     shipments_origin_return = fields.Function(
         fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
         'get_shipments_origin_returns')
-    shipments_origin_number = fields.Function(fields.Char('Origin Shipment Number'),
-        'get_shipments_origin_number')
+    shipments_origin_number = fields.Function(fields.Char(
+        'Origin Shipment Number'), 'get_shipments_origin_fields')
+    shipments_origin_effective_date = fields.Function(fields.Char(
+        'Origin Shipment Effective Date'), 'get_shipments_origin_fields')
     shipment_addresses_name = fields.Function(fields.Text('Shipment Addresses'),
         'get_shipment_addresses_name')
 
@@ -105,23 +108,26 @@ class InvoiceLine:
         def method(self, name):
             Model = Pool().get(model_name)
             shipments = set()
-            if self.origin and self.origin.__name__ == 'sale.line':
-                for move in self.origin.moves:
-                    if move.shipment and isinstance(move.shipment, Model):
-                        shipments.add(move.shipment.id)
+            for stock_move in self.stock_moves:
+                shipment = stock_move.shipment
+                if shipment and isinstance(shipment, Model):
+                    shipments.add(shipment.id)
             return list(shipments)
         return method
 
     get_shipments_origin = get_shipments_origin_returns('stock.shipment.out')
     get_shipments_origin_returns = get_shipments_origin_returns('stock.shipment.out.return')
 
-    def get_shipments_origin_number(self, name=None):
-        numbers = []
+    def get_shipments_origin_fields(self, name=None):
+        values = []
         for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
             for shipment in getattr(self, shipment_origin):
-                if shipment.number:
-                    numbers.append(shipment.number)
-        return ', '.join(numbers)
+                value = getattr(shipment, name[17:])
+                if value and isinstance(value, datetime.date):
+                    values.append(str(value))
+                else:
+                    values.append(value)
+        return ', '.join(values)
 
     @classmethod
     def get_shipment_addresses_name(cls, lines, name):
