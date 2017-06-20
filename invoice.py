@@ -97,6 +97,8 @@ class InvoiceLine:
         'get_shipments_origin_returns')
     shipments_origin_number = fields.Function(fields.Char('Origin Shipment Number'),
         'get_shipments_origin_number')
+    shipment_addresses_name = fields.Function(fields.Text('Shipment Addresses'),
+        'get_shipment_addresses_name')
 
     def get_shipments_origin_returns(model_name):
         "Computes the origin returns or shipments"
@@ -120,3 +122,23 @@ class InvoiceLine:
                 if shipment.number:
                     numbers.append(shipment.number)
         return ', '.join(numbers)
+
+    @classmethod
+    def get_shipment_addresses_name(cls, lines, name):
+        shipment_addresses = {}
+        for line in lines:
+            addresses = set()
+            for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
+                for shipment in getattr(line, shipment_origin):
+                    address = []
+                    if shipment.customer.name:
+                        address.append(shipment.customer.name)
+                    if shipment.delivery_address.street:
+                        address.append(shipment.delivery_address.street)
+                    if shipment.delivery_address.zip:
+                        address.append(shipment.delivery_address.zip)
+                    if shipment.delivery_address.subdivision:
+                        address.append(shipment.delivery_address.subdivision.name)
+                    addresses.add(', '.join(address))
+            shipment_addresses[line.id] = '\n'.join(addresses) if addresses else None
+        return shipment_addresses
