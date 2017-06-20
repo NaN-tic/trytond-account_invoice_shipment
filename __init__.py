@@ -8,4 +8,5 @@ from . import invoice
 def register():
     Pool.register(
         invoice.Invoice,
+        invoice.InvoiceLine,
         module='account_invoice_shipment', type_='model')

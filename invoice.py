@@ -3,7 +3,7 @@
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 
-__all__ = ['Invoice']
+__all__ = ['Invoice', 'InvoiceLine']
 
 
 class Invoice:
@@ -84,3 +84,39 @@ class Invoice:
 
     get_sales_origin_number = get_sales_origin_reference('number')
     get_sales_origin_reference = get_sales_origin_reference('reference')
+
+
+class InvoiceLine:
+    __metaclass__ = PoolMeta
+    __name__ = 'account.invoice.line'
+
+    shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
+        'Shipments'), 'get_shipments_origin')
+    shipments_origin_return = fields.Function(
+        fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
+        'get_shipments_origin_returns')
+    shipments_origin_number = fields.Function(fields.Char('Origin Shipment Number'),
+        'get_shipments_origin_number')
+
+    def get_shipments_origin_returns(model_name):
+        "Computes the origin returns or shipments"
+        def method(self, name):
+            Model = Pool().get(model_name)
+            shipments = set()
+            if self.origin and self.origin.__name__ == 'sale.line':
+                for move in self.origin.moves:
+                    if move.shipment and isinstance(move.shipment, Model):
+                        shipments.add(move.shipment.id)
+            return list(shipments)
+        return method
+
+    get_shipments_origin = get_shipments_origin_returns('stock.shipment.out')
+    get_shipments_origin_returns = get_shipments_origin_returns('stock.shipment.out.return')
+
+    def get_shipments_origin_number(self, name=None):
+        numbers = []
+        for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
+            for shipment in getattr(self, shipment_origin):
+                if shipment.number:
+                    numbers.append(shipment.number)
+        return ', '.join(numbers)
