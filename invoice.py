@@ -3,6 +3,7 @@
 import datetime
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
+from trytond.transaction import Transaction
 
 __all__ = ['Invoice', 'InvoiceLine']
 
@@ -119,12 +120,22 @@ class InvoiceLine:
     get_shipments_origin_returns = get_shipments_origin_returns('stock.shipment.out.return')
 
     def get_shipments_origin_fields(self, name=None):
+        pool = Pool()
+        Date = pool.get('ir.date')
+        Lang = pool.get('ir.lang')
+
         values = []
         for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
             for shipment in getattr(self, shipment_origin):
                 value = getattr(shipment, name[17:])
                 if value and isinstance(value, datetime.date):
-                    values.append(str(value))
+                    language = Transaction().language
+                    languages = Lang.search([('code', '=', language)])
+                    if not languages:
+                        languages = Lang.search([('code', '=', 'en_US')])
+                    language = languages[0]
+                    values.append(Lang.strftime(value, language.code,
+                        language.date))
                 else:
                     values.append(value)
         return ', '.join(values)
