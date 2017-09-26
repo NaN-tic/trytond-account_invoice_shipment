@@ -136,9 +136,9 @@ class InvoiceLine:
                     language = languages[0]
                     values.append(Lang.strftime(value, language.code,
                         language.date))
-                else:
+                elif value:
                     values.append(value)
-        return ', '.join(values)
+        return values and ', '.join(values)or ''
 
     @classmethod
     def get_shipment_addresses_name(cls, lines, name):
