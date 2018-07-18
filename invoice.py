@@ -51,7 +51,7 @@ class Invoice:
             for shipment in getattr(self, shipment_origin):
                 if shipment.number:
                     numbers.append(shipment.number)
-        return ', '.join(numbers) if next(iter(numbers)) else ''
+        return ', '.join(numbers)
 
     def get_shipment_origin_addresses(self, name=None):
         addresses = set()
@@ -81,7 +81,7 @@ class Invoice:
                 if line.origin and line.origin.__name__ == 'sale.line':
                     if line.origin.sale:
                         numbers.add(getattr(line.origin.sale, field_name))
-            return ', '.join(numbers) if next(iter(numbers)) else ''
+            return ', '.join(numbers)
         return method
 
     get_sales_origin_number = get_sales_origin_reference('number')
