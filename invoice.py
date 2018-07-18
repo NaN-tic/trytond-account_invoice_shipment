@@ -80,7 +80,9 @@ class Invoice:
             for line in self.lines:
                 if line.origin and line.origin.__name__ == 'sale.line':
                     if line.origin.sale:
-                        numbers.add(getattr(line.origin.sale, field_name))
+                        number = getattr(line.origin.sale, field_name)
+                        if number:
+                            numbers.add(number)
             return ', '.join(numbers)
         return method
 
@@ -120,9 +122,7 @@ class InvoiceLine:
     get_shipments_origin_returns = get_shipments_origin_returns('stock.shipment.out.return')
 
     def get_shipments_origin_fields(self, name=None):
-        pool = Pool()
-        Date = pool.get('ir.date')
-        Lang = pool.get('ir.lang')
+        Lang = Pool().get('ir.lang')
 
         values = []
         for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
