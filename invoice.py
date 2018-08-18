@@ -8,8 +8,7 @@ from trytond.transaction import Transaction
 __all__ = ['Invoice', 'InvoiceLine']
 
 
-class Invoice:
-    __metaclass__ = PoolMeta
+class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
     shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
         'Shipments'), 'get_shipments_origin')
@@ -90,8 +89,7 @@ class Invoice:
     get_sales_origin_reference = get_sales_origin_reference('reference')
 
 
-class InvoiceLine:
-    __metaclass__ = PoolMeta
+class InvoiceLine(metaclass=PoolMeta):
     __name__ = 'account.invoice.line'
 
     shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
