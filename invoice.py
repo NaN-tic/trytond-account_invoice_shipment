@@ -148,12 +148,13 @@ class InvoiceLine(metaclass=PoolMeta):
                     address = []
                     if shipment.customer.name:
                         address.append(shipment.customer.name)
-                    if shipment.delivery_address.street:
-                        address.append(shipment.delivery_address.street)
-                    if shipment.delivery_address.postal_code:
-                        address.append(shipment.delivery_address.postal_code)
-                    if shipment.delivery_address.subdivision:
-                        address.append(shipment.delivery_address.subdivision.name)
+                    if shipment_origin == 'shipments_origin':
+                        if shipment.delivery_address.street:
+                            address.append(shipment.delivery_address.street)
+                        if shipment.delivery_address.postal_code:
+                            address.append(shipment.delivery_address.postal_code)
+                        if shipment.delivery_address.subdivision:
+                            address.append(shipment.delivery_address.subdivision.name)
                     addresses.add(', '.join(address))
             shipment_addresses[line.id] = '\n'.join(addresses) if addresses else None
         return shipment_addresses
