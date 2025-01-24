@@ -126,15 +126,16 @@ class InvoiceLine(metaclass=PoolMeta):
         for shipment_origin in ['shipments_origin', 'shipments_origin_return']:
             for shipment in getattr(self, shipment_origin):
                 value = getattr(shipment, name[17:])
-                if value and isinstance(value, datetime.date):
-                    language = Transaction().language
-                    languages = Lang.search([('code', '=', language)])
+                if not value:
+                    continue
+                if isinstance(value, datetime.date):
+                    lang_code = Transaction().language
+                    languages = Lang.search([('code', '=', lang_code)])
                     if not languages:
-                        languages = Lang.search([('code', '=', 'en_US')])
+                        languages = Lang.search([('code', '=', 'en')])
                     language = languages[0]
-                    values.append(Lang.strftime(value, language.code,
-                        language.date))
-                elif value:
+                    values.append(language.strftime(value))
+                else:
                     values.append(value)
         return values and ', '.join(values) or ''
 
