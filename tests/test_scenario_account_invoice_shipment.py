@@ -10,6 +10,7 @@ from trytond.modules.account_invoice.tests.tools import (
 from trytond.modules.company.tests.tools import create_company, get_company
 from trytond.tests.test_tryton import drop_db
 from trytond.tests.tools import activate_modules
+from datetime import date
 
 
 class Test(unittest.TestCase):
@@ -26,6 +27,8 @@ class Test(unittest.TestCase):
 
         # Install account_invoice_shipment Module
         config = activate_modules(['account_invoice_shipment', 'sale'])
+
+        today = date.today()
 
         # Create company
         _ = create_company()
@@ -108,3 +111,17 @@ class Test(unittest.TestCase):
         invoice, = sale.invoices
         self.assertEqual(len(invoice.shipment_origin_addresses), 1)
         self.assertEqual(invoice.shipment_origin_address.id, 2)
+        line1, line2 = invoice.lines
+        self.assertEqual(len(line1.shipments_origin), 1)
+        shipment1, = line1.shipments_origin
+
+        self.assertEqual(line1.shipments_origin_number, '1')
+        self.assertEqual(line1.shipments_origin_effective_date, '')
+        self.assertEqual(line1.shipment_addresses_name, 'Customer')
+
+        # set effective date and check origin effective date format
+        shipment1, = line1.shipments_origin
+        shipment1.effective_date = today
+        shipment1.save()
+        line1.reload()
+        self.assertEqual(line1.shipments_origin_effective_date, today.strftime('%m/%d/%Y'))
