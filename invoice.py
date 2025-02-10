@@ -32,12 +32,10 @@ class Invoice(metaclass=PoolMeta):
         "Computes the origin returns or shipments"
         def method(self, name):
             Model = Pool().get(model_name)
-            shipments = set()
-            for line in self.lines:
-                if line.origin and line.origin.__name__ == 'sale.line':
-                    for move in line.origin.moves:
-                        if move.shipment and isinstance(move.shipment, Model):
-                            shipments.add(move.shipment.id)
+
+            shipments = {
+                m.shipment for l in self.lines
+                for m in l.stock_moves if m.shipment and isinstance(m.shipment, Model)}
             return list(shipments)
         return method
 
@@ -65,9 +63,11 @@ class Invoice(metaclass=PoolMeta):
             return self.shipment_origin_addresses[0].id
 
     def get_sales_origin(self, name=None):
+        Line = Pool().get('sale.line')
+
         sales = set()
         for line in self.lines:
-            if line.origin and line.origin.__name__ == 'sale.line':
+            if line.origin and isinstance(line.origin, Line):
                 if line.origin.sale:
                     sales.add(line.origin.sale)
         return [sale.id for sale in sales]
@@ -75,9 +75,11 @@ class Invoice(metaclass=PoolMeta):
     def get_sales_origin_reference(field_name):
         "Computes the origin number or reference"
         def method(self, name):
+            Line = Pool().get('sale.line')
+
             numbers = set()
             for line in self.lines:
-                if line.origin and line.origin.__name__ == 'sale.line':
+                if line.origin and isinstance(line.origin, Line):
                     if line.origin.sale:
                         number = getattr(line.origin.sale, field_name)
                         if number:
