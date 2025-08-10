@@ -2,7 +2,6 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-#, fuzzy
 msgctxt "field:account.invoice,sales_origin:"
 msgid "Sales"
 msgstr "Vendes"
@@ -15,7 +14,6 @@ msgctxt "field:account.invoice,sales_origin_reference:"
 msgid "Origin Sales Reference"
 msgstr "Referencia venta origen"
 
-#, fuzzy
 msgctxt "field:account.invoice,shipments_origin:"
 msgid "Shipments"
 msgstr "Albarans"
@@ -24,7 +22,6 @@ msgctxt "field:account.invoice,shipments_origin_number:"
 msgid "Origin Shipment Number"
 msgstr "Número albarà origen"
 
-#, fuzzy
 msgctxt "field:account.invoice,shipments_origin_return:"
 msgid "Shipment Returns"
 msgstr "Albarans de devolució"
