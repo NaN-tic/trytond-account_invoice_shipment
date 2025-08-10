@@ -10,7 +10,7 @@ __all__ = ['Invoice', 'InvoiceLine']
 
 class Invoice(metaclass=PoolMeta):
     __name__ = 'account.invoice'
-    shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
+    shipments_origin = fields.Function(fields.Many2Many('stock.shipment.out', None,
         'Shipments'), 'get_shipments_origin')
     shipments_origin_return = fields.Function(
         fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
@@ -21,7 +21,7 @@ class Invoice(metaclass=PoolMeta):
         None, None, 'Origin Shipment Addresses'), 'get_shipment_origin_addresses')
     shipment_origin_address = fields.Function(fields.Many2One('party.address',
         'Origin Shipment Address'), 'get_shipment_origin_address')
-    sales_origin = fields.Function(fields.One2Many('sale.sale', None,
+    sales_origin = fields.Function(fields.Many2Many('sale.sale', None,
         'Sales'), 'get_sales_origin')
     sales_origin_number = fields.Function(fields.Char('Origin Sales Number'),
         'get_sales_origin_number')
@@ -94,7 +94,7 @@ class Invoice(metaclass=PoolMeta):
 class InvoiceLine(metaclass=PoolMeta):
     __name__ = 'account.invoice.line'
 
-    shipments_origin = fields.Function(fields.One2Many('stock.shipment.out', None,
+    shipments_origin = fields.Function(fields.Many2Many('stock.shipment.out', None,
         'Shipments'), 'get_shipments_origin')
     shipments_origin_return = fields.Function(
         fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
