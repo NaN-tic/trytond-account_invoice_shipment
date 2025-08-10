@@ -13,8 +13,8 @@ class Invoice(metaclass=PoolMeta):
     shipments_origin = fields.Function(fields.Many2Many('stock.shipment.out',
             None, None, 'Shipments'), 'get_shipments_origin')
     shipments_origin_return = fields.Function(
-        fields.One2Many('stock.shipment.out.return', None, 'Shipment Returns'),
-        'get_shipments_origin_returns')
+        fields.Many2Many('stock.shipment.out.return', None, None,
+            'Shipment Returns'), 'get_shipments_origin_returns')
     shipments_origin_number = fields.Function(fields.Char('Origin Shipment Number'),
         'get_shipments_origin_number')
     shipment_origin_addresses = fields.Function(fields.Many2Many('party.address',
