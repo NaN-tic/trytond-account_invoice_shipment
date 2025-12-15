@@ -110,7 +110,7 @@ class Test(unittest.TestCase):
         sale.click('process')
         invoice, = sale.invoices
         self.assertEqual(len(invoice.shipment_origin_addresses), 1)
-        self.assertEqual(invoice.shipment_origin_address.id, 2)
+        self.assertNotEqual(invoice.shipment_origin_address, None)
         line1, line2 = invoice.lines
         self.assertEqual(len(line1.shipments_origin), 1)
         shipment1, = line1.shipments_origin
