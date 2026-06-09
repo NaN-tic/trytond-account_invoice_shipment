@@ -53,7 +53,8 @@ class Invoice(metaclass=PoolMeta):
     def get_shipment_origin_addresses(self, name=None):
         addresses = set()
         for line in self.lines:
-            if line.origin and line.origin.__name__ == 'sale.line':
+            if (line.origin
+                    and getattr(line.origin, '__name__', None) == 'sale.line'):
                 if line.origin.sale and line.origin.sale.shipment_address:
                     addresses.add(line.origin.sale.shipment_address)
         return [address.id for address in addresses]
